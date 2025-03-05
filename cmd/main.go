@@ -1,25 +1,21 @@
 package main
 
 import (
-	"example/latihan-golang-gin/api/handler"
 	"example/latihan-golang-gin/config"
+	"example/latihan-golang-gin/models"
+	"example/latihan-golang-gin/routes"
 	"log"
-
-	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	// Load konfigurasi
-	config.Load()
+	config.ConnectDatabase()
 
-	// Setup router Gin
-	r := gin.Default()
+	// Auto Migrate Models
+	config.DB.AutoMigrate(&models.User{})
 
-	// Register routes
-	handler.RegisterRoutes(r)
+	router := routes.SetupRouter()
 
-	// Start server
 	port := config.GetEnv("PORT", "7777")
 	log.Printf("Server running on :%s", port)
-	r.Run(":" + port)
+	router.Run(":" + port)
 }
